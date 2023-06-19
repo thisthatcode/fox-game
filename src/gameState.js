@@ -49,8 +49,8 @@ const gameState = {
     writeModal("");
   },
   wake() {
-    console.log("awoken");
-    (this.current = "IDLING"), (this.wakeTime = -1);
+    this.current = "IDLING"; 
+    this.wakeTime = -1;
     this.scence = Math.random() > RAIN_CHANCE ? 0 : 1;
     modScene(SCENES[this.scene]);
     this.sleepTime = this.clock + DAY_LENGTH; // how long before back to sleep
@@ -61,12 +61,22 @@ const gameState = {
     this.state = "SLEEP";
     modFox("sleep");
     modScene("night");
+    this.clearTimes();
     this.wakeTime = this.clock + NIGHT_LENGTH;
+  },
+  clearTimes() {
+    this.wakeTime = -1;
+    this.sleepTime = -1;
+    this.hungryTime = -1;
+    this.dieTime = -1;
+    this.poopTime = -1;
+    this.timeToStartCelebrating = -1;
+    this.timeToEndCelebrating = -1;
   },
   getHungry() {
     this.current = "HUNGRY";
-    this.dieTime = getNextDieTime(this.clock);
     this.hungryTime = -1;
+    this.dieTime = getNextDieTime(this.clock);
     modFox("hungry");
   },
   poop() {
@@ -76,10 +86,14 @@ const gameState = {
     modFox("pooping");
   },
   die() {
-    console.log("die");
+    this.current === "DEAD";
+    modScene("dead");
+    modFox("dead");
+    this.clearTimes();
+    writeModal("The fox died :( <br/> Press the middle button to start");
   },
   startCelebrating() {
-    this.current = "CEELBRATING";
+    this.current = "CELEBRATING";
     modFox("celebrate");
     this.timeToStartCelebrating = -1;
     this.timeToEndCelebrating = this.clock + 2;
